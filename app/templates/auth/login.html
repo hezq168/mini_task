@@ -1,0 +1,76 @@
+{%  extends 'base.html' %}
+{%  import "bootstrap/wtf.html" as wtf %}
+
+{% block navbar %}
+{% endblock %}
+
+
+{% block body %}
+<style>
+span.error {color:red;}
+</style>
+<div class="index_img " align="center">
+
+
+        <div class="row">
+            <div class="col-md-7">
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    {% for message in get_flashed_messages() %}
+                    <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <label for="name" generated="true"></label>
+                    {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                <form action="" id="login" method="post">
+                    <div class="form-group">
+                    <div class="login-main">
+                        <h4>用户登录</h4>
+                     {{ form.hidden_tag() }}
+                     {{ form.email.label }} {{ form.email(class='login-user form-control') }}
+
+                     {{ form.password.label }} {{ form.password(class='form-control') }}
+                     {{ form.submit(class='btn btn-large  btn-block btn-primary loginsubmit') }}
+                    </div>
+                    </div>
+                </form>
+
+                </div>
+            </div>
+        </div>
+
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+
+{% block js_script %}
+    <script type="application/javascript">
+        $(document).ready(function(){
+                $('#login').validate({
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                           error.appendTo(element.parent());
+                    },
+
+                    rules: {
+                        email: {required: true, email: true},
+                        password: {required: true},
+                    },
+                    messages: {
+                        email: {required: '邮箱必填！', email: "邮箱格式不正确"},
+                        password: {required: '密码必填！'},
+                    },
+
+                });
+        });
+    </script>
+{% endblock %}
+

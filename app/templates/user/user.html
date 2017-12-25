@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+
+<!--中间内容-->
+
+    <div class="row">
+        <!--左边菜单-->
+        <div class="col-md-2">
+            {% include "_menu.html" %}
+        </div>
+        <!--右边内容-->
+        <div class="col-md-10">
+            <ol class="breadcrumb">
+                <li><a href="{{ url_for('main.index') }}"><span class="glyphicon glyphicon-home ice" aria-hidden="true"></span>任务大厅</a></li>
+                <li class="active">用户管理</li>
+            </ol>
+            <!--右边内容-->
+            <div class="con">
+                <div class="list-con">
+                    <h4><i class="glyphicon glyphicon-tag"></i> 用户列表</h4>
+                </div>
+
+                <hr  style="border: 1px solid #ff0000">
+                <div class="con-text">
+                <!--右边内容菜单栏-->
+                <div class="row">
+                    <div class="col-md-8">
+                    <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#add_user"><span class="glyphicon glyphicon-plus"></span>添加用户</button>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <form class="form-inline">
+                        <input type="text" class="form-control input-sm" value="搜索的用户">
+                        <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-search"></span>搜索</button>
+                        </form>
+                    </div>
+                </div>
+                <!--右边内容列表-->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-condensed table-striped text-center">
+                        <thead  class="bg-primary">
+                        <tr>
+                            <td width="3%">#</td>
+                            <td>姓名</td>
+                            <td>帐号ID</td>
+                            <td>性别</td>
+                            <td>部门</td>
+                            <td>QQ</td>
+                            <td>邮箱</td>
+                            <td>手机</td>
+                            <td>添加时间</td>
+                            <td>角色</td>
+                            <td>状态</td>
+                            <td>操作</td>
+                        </tr>
+                        </thead>
+                        {% for user in users %}
+                        <tbody>
+                        <tr>
+                            <input type="hidden" id="user_id" name="user_id" value="{{ user.id }}">
+                            <td>{{ loop.index }}</td>
+                            <td>{{ user.username }}</td>
+                            <td >{{ user.id }}</td>
+                            <td>{{ user.sex }}</td>
+                            <td>
+                                {% for dep in deps %}
+                                    {{  dep.name if user.department == dep.id else '' }}
+                                {% endfor %}
+
+                            </td>
+                            <td>{{ user.qq }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.tel }}</td>
+                            <td>{{ user.date }}</td>
+                            <td>
+                                {% for role in roles %}
+                                    {{  role.name if user.role_id == role.id else '' }}
+                                {% endfor %}
+                            </td>
+                            <td><span class="{{'label label-info' if user.status == 0 else 'label label-warning'  }}">
+                                {{ '激活' if user.status== 0 else '禁用' }}
+                            </span></td>
+                            <td><span><a class="btn btn-xs btn-info"
+                                    href="{{ url_for('main.edit_user',user_id=user.id)}}"><i class="glyphicon glyphicon-wrench"></i> 编辑</a></span>
+                                {% if user.status ==0 %}
+                                    <button class="btn btn-xs btn-warning user_status"><i class="glyphicon glyphicon-remove-sign"></i> 禁用</button>
+                                {% else %}
+                                    <button class="btn btn-xs btn-info user_status"><i class="glyphicon glyphicon-remove-sign"></i> 启动</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        </tbody>
+                        {% endfor %}
+
+                    </table>
+                </div>
+            </div>
+            </div>
+
+        </div>
+    </div>
+<!--添加用户-->
+<div id="add_user" class="modal fade" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-title">
+                <h1 class="text-center">添加用户</h1>
+            </div>
+            <div class="modal-body">
+                <form id='reg_user' class="form-group" action="#" method="post">
+                    <div class="form-group">
+                        <label for="">姓名</label>
+                        <input id="username" class="form-control" name="username" type="text" placeholder="6-15位中文或字母">
+                    </div>
+                    <div class="form-group">
+                        <label for="">密码</label>
+                        <input id="password" class="form-control" name="password" type="password" placeholder="至少6位字母或数字">
+                    </div>
+                    <div class="form-group">
+                        <label for="">姓别</label>
+                        <select id="sex" class="form-control" name="sex">
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="department">部门</label>
+                        <select id="department" class="form-control" name="department">
+                            {% for dep in deps %}
+                                <option value="{{ dep.id }}"> {{ dep.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">QQ号</label>
+                        <input id="qq" class="form-control" name="qq" type="text" placeholder="6-15位中文或字母">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input id="email" class="form-control" name="email" type="email" placeholder="例如:123@123.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="tel">电话</label>
+                        <input id='tel' class="form-control" name='tel' type="text">
+                    </div>
+                    <div class="form-group">
+                        <label for="role_id">权限</label>
+                        <select id="role_id" class="form-control" name="role_id">
+                                {% for role in roles %}
+                                    <option value="{{ role.id }}">{{ role.name }}</option>
+                                {% endfor %}
+                        </select>
+                    </div>
+                    <div class="text-right">
+                        <button id='btnSubmit' class="btn btn-primary" type="submit">提交</button>
+                        <button class="btn btn-danger" data-dismiss="modal">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+    
+{% endblock %}
+
+{% block js_script %}
+    <script type="application/javascript">
+        $(document).ready(function(){
+            $('#reg_user').validate({
+                rules:{
+                    username:{ required:true,minlength:2},
+                    password:{ required:true,minlength:6},
+                    email:{ required:true,email:true,remote:'/checkemail/'},
+                    tel:{required:true,minlength:6},
+                    sex:{required:true},
+                    department:{required:true},
+                    permissions:{required:true}
+                },
+                messages:{
+                    username:{ required:'用户名必填！',minlength:'用户名不得少于2位！'},
+                    password:{ required:'密码必填！',minlength:'密码至少6位字母或数字！'},
+                    email:{required:'邮箱必填！',email:"邮箱格式不正确",remote:'当前邮箱不可用!'},
+                    tel:{required:'手机号必填！',minlength:'手机号位数不正确'}
+                },
+                submitHandler:function(form){
+                    $.ajax({
+                        type:'POST',
+                        url:'/add_user/',
+                        //data:userinfo,
+                        data:$(form).serialize(),
+                        dataType: 'json',
+                        success: function (response) {
+                            $('#add_user').modal('hide')
+                        },
+                        error:function(xhr){
+                            $('#add_user').modal('hide')
+                            window.location.href = '/user/';
+                        }
+
+                    })
+                }
+            });
+            //修改用户调用ajax获取数据
+            $('#user_edit').click(function(){
+               //alert('ok');
+                var user_id = $('#user_id').text();
+                    $(".user_id").click(function(){
+                      $("i").each(function(){
+                        alert($(this).text())
+                      });
+                    });
+
+
+                $.ajax({
+                   type:'GET',
+                    url:'/edit_user/?user_id='+ user_id,
+                    data:null,
+                    dataType:'json',
+                    success:function(res){
+                        console.log(res)
+                        $('#edit_username').val(res.username);
+                        $('#edit_department').val(res.department);
+
+                        $('#edit_qq').val(res.qq);
+                        $('#edit_email').val(res.email);
+                        $('#edit_tel').val(res.tel);
+                        $('#edit_role_id').val(res.role_id);
+                        $('#edit_sex').val(res.sex);
+
+                    },
+                    error:function(res){
+                        console.log(res);
+
+                    },
+
+                });
+            });
+
+            // this选择按钮状态
+            $('.user_status').click(function(){
+                alert ($(this).value())
+            });
+
+       });
+    </script>
+{% endblock %}

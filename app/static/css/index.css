@@ -1,0 +1,85 @@
+.index_img{
+    padding-bottom:100%;
+    background:url(../images/login.jpg) no-repeat center center fixed;
+    background-size:cover;
+}
+.container{
+    padding: 0 15px;
+}
+
+.login-main{
+    background-color: #fff;
+    box-shadow: 0 1px 6px #888;
+    padding: 36px 40px;
+    position: absolute;
+    right: 40px;
+    top: 100px;
+    z-index: 50;
+    text-align: left;
+    width: 350px;
+}
+.login-user{
+    margin-bottom:  15px;
+}
+.loginsubmit{
+    margin-top: 15px;
+}
+.ice{
+    margin-right: 5px;
+}
+.col-md-2,.col-md-10{
+    padding-left:0px;
+    padding-right: 0px;
+}
+.navbar{
+    margin-bottom: 0px;
+}
+.index-login{
+    font: 20px;
+}
+.logo{
+    float: left;
+    height: 100%;
+    text-align: center;
+    font-size: 26px;
+    font-weight:bold;
+    margin-top:10px;
+    margin-left: 10px;
+}
+.logo-user{
+    margin-right: 10px;
+    margin-top: 25px;
+}
+.con{
+    /**border-style:solid;*/
+    border:1px solid #f5e79e;
+    /**height: 750px;*/
+}
+
+
+.breadcrumb{
+    margin-bottom: 0px;
+}
+
+@-moz-document url-prefix() {
+    fieldset { display: table-cell; }
+}
+.con-text
+    {
+    border:1px solid #f5e79e;
+    margin-left: 5px;
+}
+
+.list-con{
+    font-size: 18px;
+    font-weight:bold;
+    margin-top:10px;
+    margin-left: 10px;
+
+}
+.add_task_input{
+    height: 30px;
+
+}
+
+label.error{color: red;}

@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block body %}
+    <!--中间内容-->
+    <div class="row">
+        <!--左边菜单-->
+        <div class="col-md-2">
+            {% include "_menu.html" %}
+        </div>
+        <!--右边内容-->
+        <div class="col-md-10">
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="glyphicon glyphicon-home ice" aria-hidden="true"></i>任务大厅</a></li>
+                <li class="active">首页</li>
+            </ol>
+            <!--右边内容-->
+            <div class="con">
+                <div class="list-con">
+                    <i class="glyphicon glyphicon-tag">任务列表</i>
+                </div>
+                <hr  style="border: 1px solid #ff0000">
+                <div class="con-text">
+                <!--右边内容菜单栏-->
+                <div class="row">
+                    <div class="col-md-8">
+                        {% if session.user.node.has_key(6) %}
+                                <a href="{{ url_for('main.add_task') }}"><button class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></span>发布任务</button></a>
+                        {% endif %}
+                    <a href="{{ url_for('main.index') }}"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-home"></span>任务大厅</button></a>
+                    <a href="/search_task/no_start"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-remove-sign"></span> 未开始</button></a>
+                    <a href="/search_task/start"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-time"></span>进行中</button></a>
+                    <a href="/search_task/end_start"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-ok"></span>已完成</button></a>
+                    </div>
+                    <div  class="col-md-4 text-right">
+                        <form  action="/index" method="post" class="form-inline">
+                            {{ search_form.hidden_tag() }}
+                            {{ search_form.search_task(class='form-control') }}
+                            {{ search_form.submit(class='btn btn-default btn-sm glyphicon glyphicon-search') }}
+                        </form>
+                    </div>
+                </div>
+                <!--右边内容列表-->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-condensed table-striped text-center">
+                        <thead  class="bg-primary">
+                        <tr>
+                            <td width="5%">任务编号</td>
+                            <td>任务名</td>
+                            <td width="4%">发布人</td>
+                            <td width="4%">责任人</td>
+                            <td width="4%">协助人</td>
+                            <td width="5%">所属项目</td>
+                            <td width="5%">任务部门</td>
+                            <td width="4%">优先级</td>
+                            <td width="5%">状态</td>
+                            <td width="10%">开始时间</td>
+                            <td width="10%">结束时间</td>
+                            <td width="12%">操作</td>
+                        </tr>
+                        </thead>
+                        <tbody class="task_tb">
+                        {% for task in tasks %}
+                        <tr>
+                            <td>{{ task.id }}</td>
+                            <td><a href="/task/{{ task.id }}" target="_blank">{{ task.task_name }}</a></td>
+                            <td>{{ task.task_user }}</td>
+                            <td>{{ task.duty }}</td>
+                            <td>{{ task.assist }}</td>
+                            <td>{{ task.project }}</td>
+                            <td>{{ task.department }}</td>
+                            <td><span {% if task.priority=='高' %} class='label label-sm label-danger' {% elif task.priority=='中' %}
+                                                                  class='label label-sm label-warning'{% else %}
+                                                                  class='label label-sm label-info'
+                                {% endif %}>{{ task.priority }}</span></td>
+                            <td><span {% if task.task_status =='已完成'%}class='label label-sm label-success'
+                                      {% elif task.task_status =='进行中'%} class='label label-sm label-info'
+                                      {% else %} class='label label-sm label-warning'
+                                      {% endif %}>{{  task.task_status }}</span></td>
+                            <td>{{ task.start_time }}</td>
+                            <td>{{ task.end_time }}</td>
+                            <td>
+                                {% if ((task.duty == current_user.username or task.task_user == current_user.username
+                                 or task.assist == current_user.username) and task.task_status !='已完成') or current_user.id == 1 %}
+                                     <a href="{{ url_for('main.edit_task',task_id=task.id)}}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>编辑</a>
+                                {% else %}
+                                    <a href="{{ url_for('main.edit_task',task_id=task.id)}}" class="btn btn-default btn-sm disabled"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>编辑</a>
+                                {% endif %}
+                                {% if (task.task_status=='未开始' and current_user.username == task.task_user)  or current_user.id ==1  %}
+                                    <a  href="javascript:if(confirm('确实要删除吗?'))location='/del_task/{{ task.id }}'" id="del_task" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除</a></td>
+                                {% else %}
+                                    <a  href="" id="del_task" class="btn btn-default btn-sm disabled"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除</a></td>
+                                {% endif %}
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                    {% for post in posts %}
+                        {{ post.body }}
+                    {% endfor %}
+
+
+
+                    <!--分页-->
+
+                    <nav aria-label="Page navigation" style="text-align: center;">
+                        <ul class="pagination pagination-sm">
+                            {% for p in pagination.iter_pages() %}
+
+
+                                <li>
+                                    <a href="{{ url_for('.index',page=p)}}">{{p}}</a>
+                                </li>
+
+                            {% endfor %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+{% block js_script %}
+<script type="application/javascript">
+</script>
+{% endblock %}

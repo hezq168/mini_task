@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+
+<!--中间内容-->
+
+    <div class="row">
+        <!--左边菜单-->
+        <div class="col-md-2">
+            {% include "_menu.html" %}
+        </div>
+        <!--右边内容-->
+        <div class="col-md-10">
+            <ol class="breadcrumb">
+                <li><a href="{{ url_for('main.index') }}"><span class="glyphicon glyphicon-home ice" aria-hidden="true"></span>任务大厅</a></li>
+                <li class="active">用户管理</li>
+            </ol>
+            <!--右边内容-->
+            <div class="con">
+                <div class="list-con">
+                    <h4><i class="glyphicon glyphicon-tag"></i> 修改用户</h4>
+                </div>
+                <hr  style="border: 1px solid #ff0000">
+                <div class="con-text">
+                <div class="row">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-4">
+                        <div class="modal-body" >
+                                <form class="form-horizontal" id="edit_user" action="" method="POST">
+                                    <input type="hidden" name='user_id' value="{{ users.id }}">
+                                <div class="form-group">
+                                    <label for="username">姓名</label>
+                                    <input class="form-control" id='username' name="username" type="text" value="{{ users.username }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">新密码</label>
+                                    <input class="form-control" id='password' name="password" type="password" >
+                                </div>
+                                <div class="form-group">
+                                    <label for="sex">姓别</label>
+                                    <select id='sex' name="sex" class="form-control">
+                                        <option {{'selected=selected' if users.sex == '男' else '' }} value="男">男</option>
+                                        <option {{'selected=selected' if users.sex == '女' else '' }} value="女">女</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="department">部门</label>
+                                    <select id="department" class="form-control" name="department">
+                                        {% for dep in deps %}
+                                            <option  {{'selected=selected' if dep.id == users.department else '' }} value="{{ dep.id }}"> {{ dep.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="qq">QQ号</label>
+                                    <input id="qq"  name='qq ' class="form-control" type="text" value="{{ users.qq }}" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">邮箱</label>
+                                    <input id="email" class="form-control" name="email" value="{{ users.email }}" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tel">电话</label>
+                                    <input id='tel' class="form-control" name='tel' type="text" value="{{ users.tel }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="role_id">权限</label>
+                                    <select id="role_id" class="form-control" name="role_id">
+                                            {% for role in roles %}
+                                                <option {{'selected=selected' if role.id == users.role_id else '' }} value="{{ role.id }}">{{ role.name }}</option>
+                                            {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary" type="submit">修改</button>
+                                </div>
+                            </form>
+                    </div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 45px"></div>
+                </div>
+
+            </div>
+        </div>
+
+
+{% endblock %}
+
+{% block js_script %}
+    <script type="application/javascript">
+        $(document).ready(function(){
+            $('#edit_user').validate({
+                rules:{
+                    username:{ required:true,minlength:2},
+                    email:{ required:true,email:true,remote:'/checkemail/'},
+                    tel:{required:true,minlength:6},
+                    sex:{required:true},
+                    department:{required:true},
+                    permissions:{required:true}
+                },
+                messages:{
+                    username:{ required:'用户名必填！',minlength:'用户名不得少于2位！'},
+                    email:{required:'邮箱必填！',email:"邮箱格式不正确",remote:'当前邮箱不可用!'},
+                    tel:{required:'手机号必填！',minlength:'手机号位数不正确'}
+                },
+                submitHandler:function(form){
+                    $.ajax({
+                        type:'POST',
+                        url:'/edit_user/',
+                        //data:userinfo,
+                        data:$(form).serialize(),
+                        dataType: 'json',
+                        success: function (response) {
+                            window.location.href = '/user/';
+                        },
+                        error:function(xhr){
+
+                            window.location.href = '/user/';
+                        }
+
+                    })
+                }
+            });
+            //修改用户调用ajax获取数据
+            $('#user_edit').click(function(){
+               //alert('ok');
+                var user_id = $('#user_id').text();
+                    $(".user_id").click(function(){
+                      $("i").each(function(){
+                        alert($(this).text())
+                      });
+                    });
+
+
+                $.ajax({
+                   type:'GET',
+                    url:'/edit_user/?user_id='+ user_id,
+                    data:null,
+                    dataType:'json',
+                    success:function(res){
+                        console.log(res)
+                        $('#edit_username').val(res.username);
+                        $('#edit_department').val(res.department);
+
+                        $('#edit_qq').val(res.qq);
+                        $('#edit_email').val(res.email);
+                        $('#edit_tel').val(res.tel);
+                        $('#edit_role_id').val(res.role_id);
+                        $('#edit_sex').val(res.sex);
+
+                    },
+                    error:function(res){
+                        console.log(res);
+
+                    },
+
+                });
+            });
+
+       });
+    </script>
+{% endblock %}

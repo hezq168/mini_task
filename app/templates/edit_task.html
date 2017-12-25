@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+<!--中间内容-->
+<div class="container-fluid" xmlns="http://www.w3.org/1999/html">
+    <div class="row">
+        <!--左边菜单-->
+        <div class="col-md-2">
+            {% include "_menu.html" %}
+        </div>
+        <!--右边内容-->
+        <div class="col-md-10">
+            <ol class="breadcrumb">
+                <li><a href="{{ url_for('main.index') }}"><span class="glyphicon glyphicon-home ice" aria-hidden="true"></span>任务大厅</a></li>
+                <li class="active">添加任务</li>
+            </ol>
+            <!--右边内容-->
+            <div class="con">
+                <div class="list-con">
+                    <span class="glyphicon glyphicon-tag">修改任务</span>
+                </div>
+
+                <hr  style="border: 1px solid #ff0000">
+                <div class="con-text">
+                    <form action='' class="form-inline" method="post">
+
+                        <div class="row" style="margin-top: 5px;">
+                        <div class="col-md-6">
+                            <div class="input-group">
+
+                                <div class="input-group-addon">任务名：</div>
+                                <input type=text  class='form-control' name="task_name" value='{{ edit_task.task_name }}'/>
+
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">责任人：</div>
+                                {{ form.duty(class='form-control') }}
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px;">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">协助人：</div>
+                                {{ form.assist(class='form-control') }}
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">所属项目：</div>
+                                {{ form.project(class='form-control') }}
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px;">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">优先权：</div>
+                                {{ form.priority(class='form-control') }}
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">任务类型：</div>
+                                {{ form.task_type(class='form-control') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px;">
+                        <div  class="col-md-6">
+                            <div class="input-group">
+                            <div class="input-group-addon">任务部门:</div>
+                                 {{ form.department(class='form-control') }}
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">任务进度：</div>
+                                <select class="form-control" name="progress">
+                                    <option value="进行中">进行中</option>
+                                    <option value="已完成">已完成</option>
+                                    <option value="未开始">未开始</option>
+                                </select>
+
+                                </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 5px;">
+                        任务描述：
+                        <textarea name='text' row='8' cols="20" class='form-control' style="width: 800px;">{{ edit_task.text }}</textarea>
+
+                    </div>
+                    <div style="margin-top: 5px" class="text-center">
+                        <input  class="btn  btn-info" type="submit" name="submit" value="修改"/>
+                    </div>
+
+
+
+                    </form>
+
+            </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+
+{% block footer %}
+<script type="application/javascript" src="{{ url_for('static', filename='js/jquery-2.1.1.js') }}"></script>
+<script type="application/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>
+<script type="application/javascript" src="{{ url_for('static', filename='js/bootstrap-datetimepicker.js') }}"></script>
+<script type="application/javascript" src="{{ url_for('static', filename='js/bootstrap-datetimepicker.zh-CN.js') }}"></script>
+
+<script type="text/javascript">
+
+
+    var newDate = new Date();
+    var time1   = newDate.toJSON();
+
+    Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
+    //var time2 = new Date().Format("yyyy-MM-dd hh:mm:ss");
+
+    //$(".statdata").val(time2);
+    //$(".enddata").val(time2);
+
+    $('#start_time').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        minView:0,
+        language: 'zh-CN',
+        autoclose:true,
+        todayBtn:true,
+        startDate:new Date(time1)
+    });
+    $('#end_time').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        minView:0,
+        language: 'zh-CN',
+        autoclose:true,
+        todayBtn:true,
+        startDate:new Date(time1)
+    });
+
+
+    function task_status(text,id){
+    var arr = $(id);//取select所有值
+    for(var i =0;i<arr.length;i++){
+        if($(arr[i]).text()== text){
+            $(arr[i]).attr("selected","selected")
+        }else{
+            $(arr[i]).removeAttr("selected");
+        }
+    }
+    }
+
+    task_status("{{ edit_task.duty }}","#duty option");
+    task_status("{{ edit_task.assist }}","#assist option");
+    task_status("{{ edit_task.project }}","#project option");
+    task_status("{{ edit_task.priority }}","#priority option");
+    task_status("{{ edit_task.task_type }}","#task_type option");
+    task_status("{{ edit_task.department }}","#department option");
+
+</script>
+
+
+{% endblock %}

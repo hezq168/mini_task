@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+<div class="row">
+        <!--左边菜单-->
+        <div class="col-md-2">
+            {% include "_menu.html" %}
+        </div>
+
+        <div class="col-md-10">
+            <ol class="breadcrumb">
+                <li><a href="{{ url_for('main.index') }}"><span class="glyphicon glyphicon-home ice" aria-hidden="true"></span>任务大厅</a></li>
+                <li class="active">角色管理</li>
+            </ol>
+            <!--右边内容-->
+            <div class="con">
+                <div class="list-con">
+                    <h4><i class="glyphicon glyphicon-tag"></i> 角色列表</h4>
+                </div>
+
+                <hr  style="border: 1px solid #ff0000">
+                <div class="con-text">
+                <!--右边内容菜单栏-->
+                    <div class="row">
+                        <div class="col-md-8">
+                            <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#add_user"><span class="glyphicon glyphicon-plus"></span>添加角色</button>
+                        </div>
+                    <div class="col-md-4 text-right">
+                        <form class="form-inline">
+                        <input type="text" class="form-control input-sm" value="搜索的角色">
+                        <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-search"></span>搜索</button>
+                        </form>
+                    </div>
+                    </div>
+                     <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-condensed table-striped text-center">
+                            <thead  class="bg-primary">
+                                <tr>
+                                    <th width="3%">#</th>
+                                    <th>ID</th>
+                                    <th>角色名</th>
+                                    <th>权限</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for role in roles %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ role.id }}</td>
+                                    <td>{{ role.name }}</td>
+                                    <td>{% for node in role.node_id %}
+                                            {{ node.id }}:{{ node.name }}/
+                                        {% endfor %}
+                                    </td>
+                                    <td><button class="btn btn-xs btn-info">编辑</button> <button class="btn btn-xs btn-danger">删除</button></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+</div>
+
+{% endblock %}
+
+{% block js_script %}
+
+{% endblock %}

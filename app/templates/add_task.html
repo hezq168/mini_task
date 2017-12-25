@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% block body %}
+<!--中间内容-->
+    <div class="row">
+        <!--左边菜单-->
+        <div class="col-md-2">
+            {% include "_menu.html" %}
+        </div>
+        <!--右边内容-->
+        <div class="col-md-10">
+            <ol class="breadcrumb">
+                <li><a href="{{ url_for('main.index') }}"><i class="glyphicon glyphicon-home ice" aria-hidden="true"></i>任务大厅</a></li>
+                <li class="active">添加任务</li>
+            </ol>
+            <!--右边内容-->
+            <div class="con">
+                <div class="list-con">
+                    <span class="glyphicon glyphicon-tag">发布任务</span>
+                </div>
+
+                <hr  style="border: 1px solid #ff0000">
+                <div class="con-text">
+                    <form action="" id='add_task' class="form-inline" method="post">
+                        {{ form.hidden_tag() }}
+                        <div class="row" style="margin-top: 5px;">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">{{ form.task_name.label }} </div>
+                                {{ form.task_name(class='login-user form-control') }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">{{ form.duty.label }}</div>
+                                {{ form.duty(class='form-control') }}
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px;">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">{{ form.assist.label }}</div>
+
+                                    {{ form.assist(class='form-control') }}
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">{{ form.project.label }}</div>
+
+                                    {{ form.project(class='form-control') }}
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px;">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">{{ form.priority.label }}</div>
+
+                                    {{ form.priority(class='form-control') }}
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">{{ form.task_type.label }}</div>
+
+                                    {{ form.task_type(class='form-control') }}
+
+                            </div>
+                        </div>
+                        <div  class="col-md-6">
+                            <div class="input-group">
+                            <div class="input-group-addon">{{ form.department.label }}</div>
+
+                            {{ form.department(class='form-control') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px;">
+                        <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon"><label>开始时间:</label></span><input id='start_time' type="text" name="start_time" class="form-control" placeholder="请选择开始时间...">
+                        </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><label>结束时间:</label></span><input id='end_time' type="text" name="end_time" class="form-control" placeholder="请选择结束时间...">
+                            </div>
+                         </div>
+                    </div>
+
+                    <div  style="margin-top: 5px;">
+
+                        {{ form.text.label }}
+                        {{ form.text(class='form-control',row='8',style="width: 800px;") }}
+
+
+                    </div>
+                    <div style="margin-top: 5px" class="text-center">
+                        {{ form.submit(class='btn btn-primary') }}
+                    </div>
+
+                    {%for e in form.task_name.errors%}
+                        <span style="color: red">*{{e}}</span>
+                    {%endfor%}
+                    <br />
+                    {%for e in form.text.errors%}
+                                <span style="color: red">*{{e}}</span>
+                    {%endfor%}
+                {% for error in form.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}<br>
+
+
+                    </form>
+
+            </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+{% endblock %}
+{% block footer %}
+<script type="application/javascript" src="{{ url_for('static', filename='js/bootstrap-datetimepicker.js') }}"></script>
+<script type="application/javascript" src="{{ url_for('static', filename='js/bootstrap-datetimepicker.zh-CN.js') }}"></script>
+<script type="application/javascript">
+
+</script>
+ <script>
+      $(function() {
+          $('#start_time').datetimepicker({
+            format: 'yyyy-mm-dd hh:ii',
+            minView:0,
+            language: 'zh-CN',
+            autoclose:true,
+            todayBtn:true,
+          });
+      });
+      $(function() {
+          $( "#end_time" ).datetimepicker({
+              format: 'yyyy-mm-dd hh:ii',
+              minView:0,
+              language: 'zh-CN',
+              autoclose:true,
+              todayBtn:true,
+          });
+      });
+      $('#submit').click(function(){
+           var start_time = $('#start_time').val();
+            $('#start_time').attr("value",start_time);
+          var end_time = $('#end_time').val();
+            $('#end_time').attr("value",end_time);
+
+
+      });
+
+        $('#add_task').validate({
+            rules:{
+                task_name:{ required:true},
+                start_time:{ required:true,date:true},
+                end_time:{ required:true,date:true},
+                text:{required:true,minlength:6},
+
+            },
+            messages:{
+                task_name:{ required:'任务名必填！'},
+                start_time:{ required:'任务开始时间必填',date:'时间格式不正确！'},
+                end_time:{required:'任务结束时间必填！',date:'时间格式不正确！'},
+                text:{required:'任务描述必填！',minlength:'任务描述位长度最少6位！'}
+            },
+        });
+
+  </script>
+
+
+
+{% endblock %}
+
+
+

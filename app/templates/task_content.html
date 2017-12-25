@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<!--中间内容-->
+    <div class="row">
+        <!--左边菜单-->
+        <div class="col-md-2">
+            {% include "_menu.html" %}
+        </div>
+        <!--右边内容-->
+        <div class="col-md-10">
+            <ol class="breadcrumb">
+                <li><a href="{{ url_for('main.index') }}"><span class="glyphicon glyphicon-home ice" aria-hidden="true"></span>任务大厅</a></li>
+                <li class="active">任务内容</li>
+            </ol>
+            <!--右边内容-->
+            <div class="con">
+                <div class="list-con">
+                    <span style="color: #ff0000">【{{ task_content.task_status }}】{{ task_content.project }}----{{ task_content.task_name }}</span>
+                </div>
+
+                <hr  style="border: 1px solid #ff0000">
+                <div class="con-text">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div><h3>【{{ task_content.task_user }}】于{{ task_content.input_date }}发布给【{{ task_content.duty }}】的任务，要求在{{ task_content.end_time }}前完成</h3></div>
+                            <div><h3 ><span class="label label-info">任务描述：</span></h3></div>
+                            <div>
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        {{ task_content.text }}
+                                    </li>
+
+                                </ul>
+                            </div>
+                            <div ><h4 ><span class="label label-primary">回复</span></h4></div>
+                            <div>
+                            {% for task_txt in task_txts %}
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <a href="#"></a>
+                                    <h5>用户名：{{ task_txt.user_name }}</h5>
+                                    <h5>回复内容：{{ task_txt.txt }}</h5>
+                                    <span class="text-right">
+                                        回复时间：{{ task_txt.date }}
+                                    </span>
+                                </li>
+                            </ul>
+                            {% endfor %}
+                            </div>
+                            <div>
+                            <form action="" class="form-inline" method="post">
+                                {{ task_con.hidden_tag() }}
+                                <div style="margin-top: 5px;">
+                                    <div><h4 ><span class="label label-primary">{{ task_con.text.label }}</span></h4> </div>
+                                    {{ task_con.text(class='form-control',row='8',style="width: 800px;") }}
+                                </div>
+                                <div style="margin-top: 5px" class="text-center">
+                                    {{ task_con.submit(class='btn btn-primary') }}
+                                </div>
+                            </form>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <h3 ><span class="label label-primary">任务操作</span></h3>
+                            <hr>
+                            <ul class="list-group">
+                                <li class="list-group-item"><span>该任务{{ task_content.task_status }}</span></li>
+                                <li class="list-group-item">完成人:{{ task_content.duty }}</li>
+                                {% if   task_content.assist %}
+                                    <li class="list-group-item">协助人：{{ task_content.assist }}</li>
+                                {% else %}
+                                    <li class="list-group-item">协助人：无</li>
+                                {% endif %}
+                                <li class="list-group-item">开始时间：{{ task_content.start_time }}</li>
+                                <li class="list-group-item">完成时间：{{ task_content.end_time }}</li>
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+            </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block js_script %}
+
+
+
+{% endblock %}
