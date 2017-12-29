@@ -23,7 +23,4 @@ manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':
-    #import logging
-    #logging.basicConfig(filename='D:/project/manage/log/access.log', level=logging.DEBUG)
     manager.run()
-    #app.run(host='0.0.0.0',port=6060,debug=True)

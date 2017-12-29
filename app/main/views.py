@@ -11,7 +11,9 @@ from app import db
 from app.tasks.printy import task_mail
 from hashlib import md5
 from ..decorators import permission_required
-
+from config import Config
+import os
+from werkzeug.utils import secure_filename
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -85,6 +87,22 @@ def add_user():
 @login_required
 @permission_required(4)
 def edit_user():
+    # 禁用用户
+    if request.method == 'GET':
+        uid = request.args.get('user_id')
+        ustatus = int(request.args.get('user_op'))
+
+        #  ustatus 1 表示禁用，0 表示启动
+        if ustatus == 1:
+            u = User.query.filter(User.id==uid).first()
+            u.status = 1
+            db.session.commit()
+            return jsonify("'msg':'禁用成功'")
+        else:
+            u = User.query.filter(User.id==uid).first()
+            u.status = 0
+            db.session.commit()
+            return jsonify("'msg':'启用成功'")
     return 'ok!'
 
 @main.route('/checkemail/',)
@@ -140,7 +158,8 @@ def add_task():
             _user = Task.query.order_by(db.desc(Task.id)).first()
             to_mail = User.query.filter(User.username==_user.duty).first()
             subject = '''新任务，任务编号: %s，任务名:%s，需要你解决！''' %(_user.id,_user.task_name)
-            content = '''任务编号: %s  <br/>任务名:%s <br/> 任务内容: %s <br/>任务结束时间:%s ''' %(_user.id,_user.task_name,_user.text,_user.end_time)
+            content = '''任务编号: %s  <br/>任务名:%s <br/> 任务内容: %s <br/>任务结束时间:%s<br/>优先级:%s ''' \
+                      %(_user.id,_user.task_name,_user.text,_user.end_time,_user.priority)
             task_mail(to_mail.email,subject,content)
             flash('添加成功.')
             return redirect(url_for('main.index'))
@@ -233,16 +252,17 @@ def edit_task(task_id):
                 if _progres == '已完成':
                     #已完成修改完成时间
                     _update = {"task_name":_task_name,"duty":_duty,"assist":_assist,"project":_project,"task_type":_task_type,
-                               "end_time":_end_date,"text":_text,"task_status":_progres,"department":_department}
+                               "end_time":_end_date,"text":_text,"task_status":_progres,"department":_department,"priority":_priority}
                 else:
                     _update = {"task_name":_task_name,"duty":_duty,"assist":_assist,"project":_project,"task_type":_task_type,
-                               "task_status":_progres,"text":_text,"department":_department}
+                               "task_status":_progres,"text":_text,"department":_department,"priority":_priority}
 
                 if Task.query.filter(Task.id==task_id).update(_update):
                     #修改任务后，发送邮件给任务责任人
                     to_mail = User.query.filter(User.username==_edit.duty).first()
                     subject = '''任务编号: %s，任务名:%s 有变更！"''' %(_edit_id,_task_name)
-                    content = '''任务编号: %s  <br/>任务名:%s <br/> 任务内容: %s <br/>任务结束时间:%s <br/>任务状态:%s''' %(_edit_id,_task_name,_text,_end_date,_progres)
+                    content = '''任务编号: %s  <br/>任务名:%s <br/> 任务内容: %s <br/>任务结束时间:%s <br/>任务状态:%s<br/>优先级:%s''' \
+                              %(_edit_id,_task_name,_text,_end_date,_progres,_priority)
                     task_mail.delay(to_mail.email,subject,content)
 
                 return redirect(url_for('main.index'))
@@ -273,13 +293,14 @@ def task(task_id):
             task = Task.query.get_or_404(task_id)
             #获取任务对应的回复数据
             task_txt = TaskTxt.query.filter(TaskTxt.id_task==task_id)
-            return render_template('task_content.html',task_content=task,task_txts=task_txt,task_con=task_con)
+            avatars = User.query.filter()
+            return render_template('task_content.html',task_content=task,task_txts=task_txt,task_con=task_con,avatars=avatars)
 
     return redirect(url_for('main.task',task_id=task_id))
 
 
 
-#我的资料
+# 我的资料
 @main.route('/my_info',methods=['POST','GET'])
 @login_required
 def my_info():
@@ -292,3 +313,33 @@ def my_info():
     else:
 
         return render_template('user/my_info.html')
+
+# 上传头像
+@main.route('/upload', methods=['POST'])
+@login_required
+def upload_file():
+    if request.method == 'POST':
+        files = request.files['file']
+        myhash = md5()
+        f = file(os.path.join(Config.UPLOAD_FOLDER, files.filename), 'rb')
+        while True:
+            b = f.read(8096)
+            if not b:
+                break
+            myhash.update(b)
+        f.close()
+        if '.' in files.filename and files.filename.rsplit('.', 1)[1] in Config.ALLOWED_EXTENSIONS:
+            # 上传文件
+            # 保存文件
+            filename = secure_filename(files.filename)
+            files.save(os.path.join(Config.UPLOAD_FOLDER, filename))
+            u = User.query.filter(User.id == current_user.id).first()
+            u.avatar = filename
+            db.session.commit
+            img = {'state': 1}
+            return jsonify(img)
+        else:
+            img = {'state': 0}
+            return jsonify(img)
+    else:
+        return '不允许访问！！！！'

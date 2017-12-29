@@ -81,12 +81,11 @@
                             <td><span class="{{'label label-info' if user.status == 0 else 'label label-warning'  }}">
                                 {{ '激活' if user.status== 0 else '禁用' }}
                             </span></td>
-                            <td><span><a class="btn btn-xs btn-info"
-                                    href="{{ url_for('main.edit_user',user_id=user.id)}}"><i class="glyphicon glyphicon-wrench"></i> 编辑</a></span>
+                            <td><button class="btn btn-xs btn-info"><i class="glyphicon glyphicon-wrench"></i> 编辑</button>
                                 {% if user.status ==0 %}
-                                    <button class="btn btn-xs btn-warning user_status"><i class="glyphicon glyphicon-remove-sign"></i> 禁用</button>
+                                    <button class="btn btn-xs btn-warning user_status" value="1"><i class="glyphicon glyphicon-remove-sign"></i> 禁用</button>
                                 {% else %}
-                                    <button class="btn btn-xs btn-info user_status"><i class="glyphicon glyphicon-remove-sign"></i> 启动</button>
+                                    <button class="btn btn-xs btn-info user_status" value="0"><i class="glyphicon glyphicon-remove-sign"></i> 启动</button>
                                 {% endif %}
                             </td>
                         </tr>
@@ -97,10 +96,14 @@
                     </table>
                 </div>
             </div>
+
+
             </div>
 
         </div>
+
     </div>
+
 <!--添加用户-->
 <div id="add_user" class="modal fade" data-backdrop="static" tabindex="-1">
     <div class="modal-dialog">
@@ -245,9 +248,33 @@
 
             // this选择按钮状态
             $('.user_status').click(function(){
-                alert ($(this).value())
+                var user_id = $(this).parent().parent().find('td:eq(2)').html(); //取出帐号ID
+                var user_op = $(this).val();
+                //alert(user_op);
+                user_status(user_id,user_op);
             });
 
+            //修改用户状态ajax
+            function user_status(user_id,user_op){
+                var user_data ={
+                    'user_id' : user_id,
+                    'user_op' : user_op,
+                };
+                $.ajax({
+                    url:'/edit_user/',
+                    type:'GET',
+                    dataType:'json',
+                    data:user_data,
+                    success:function(data){
+                        alert(data)
+                        window.location.href = '/user/';
+
+                    },
+                    error:function(e){
+                        console.log(e)
+                    }
+                })
+            }
        });
     </script>
 {% endblock %}

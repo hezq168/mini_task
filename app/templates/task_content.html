@@ -38,12 +38,25 @@
                             {% for task_txt in task_txts %}
                             <ul class="list-group">
                                 <li class="list-group-item">
-                                    <a href="#"></a>
-                                    <h5>用户名：{{ task_txt.user_name }}</h5>
-                                    <h5>回复内容：{{ task_txt.txt }}</h5>
-                                    <span class="text-right">
-                                        回复时间：{{ task_txt.date }}
-                                    </span>
+                                    <div class="row">
+
+
+                                    <div class="col-md-2">
+                                        {% for avatar in avatars %}
+                                            {% if task_txt.user_name == avatar.username %}
+                                                <img src="{{ url_for('static', filename='images/avatar/'+avatar.avatar) }}"  height="100" width="100" alt="用户头像" class="img-rounded profile-thumbnail">
+                                            {% endif %}
+                                        {% endfor %}
+                                        <h5>用户名：{{ task_txt.user_name }}</h5>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>回复内容：{{ task_txt.txt }}</h5>
+                                        <span class="text-right">
+                                            回复时间：{{ task_txt.date }}
+                                        </span>
+                                    </div>
+
+                                      </div>
                                 </li>
                             </ul>
                             {% endfor %}

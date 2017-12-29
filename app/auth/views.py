@@ -30,6 +30,10 @@ def login():
         # 判断用户状态 0 未禁用，1 禁用
         if user.status == 0:
             #判断邮箱和密码
+            print '11111111111'
+            print user
+            print md5_pw
+
             if user is not None and user.password == md5_pw:
                 login_user(user)
                 #取出用户数据

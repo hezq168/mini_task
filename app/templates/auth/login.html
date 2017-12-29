@@ -3,15 +3,32 @@
 
 {% block navbar %}
 {% endblock %}
-
-
 {% block body %}
 <style>
 span.error {color:red;}
+#bg {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+}
+
+#bg img {
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    margin:auto;
+    width:100%;
+    height:100%;
+    z-index:-1;
+}
 </style>
-<div class="index_img " align="center">
-
-
+<div id="bg">
+    <img src="{{ url_for('static', filename='images/login.jpg') }}">
+</div>
+<div align="center">
         <div class="row">
             <div class="col-md-7">
             </div>
@@ -38,19 +55,13 @@ span.error {color:red;}
                     </div>
                     </div>
                 </form>
-
                 </div>
             </div>
         </div>
-
-
 </div>
 {% endblock %}
-
 {% block footer %}
 {% endblock %}
-
-
 {% block js_script %}
     <script type="application/javascript">
         $(document).ready(function(){

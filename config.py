@@ -45,6 +45,10 @@ class Config():
 #   文章分页数
     POSTS_PER_PAGE = 15
 
+#   文件上传设置
+    UPLOAD_FOLDER = basedir + "/app/static/images/avatar"
+    ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
 
     @staticmethod
     def init_app(app):

@@ -30,6 +30,7 @@ class User(UserMixin,db.Model):
     qq = db.Column(db.String(64))
     email = db.Column(db.String(64))
     tel = db.Column(db.String(255))
+    avatar =db.Column(db.String(64),default='2e290c00150943b02940a0f680ca67aa.png')  # 头像文件
     status = db.Column(db.Integer,default=0)      #用户状态 0:激活  1:禁用
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))  #  角色外键
 
