@@ -170,12 +170,29 @@
         </div>
     </div>
 </div>
-    
+{% include 'msg.html' %}
 {% endblock %}
 
 {% block js_script %}
     <script type="application/javascript">
         $(document).ready(function(){
+
+          // 定义弹出框消息函数
+          function msg(op,title,body){
+            if (op == 'ok')
+            {
+              $('.msg-title').html(title).addClass('alert alert-success');
+              $('.msg-body').html(body);
+              $('#myModal').modal('show');
+            }else if(op == 'error'){
+              $('.msg-title').html(title).addClass('alert alert-warning');
+              $('.msg-body').html(body);
+              $('#myModal').modal('show');
+            };
+
+          };
+
+
             $('#reg_user').validate({
                 rules:{
                     username:{ required:true,minlength:2},
@@ -199,12 +216,15 @@
                         //data:userinfo,
                         data:$(form).serialize(),
                         dataType: 'json',
-                        success: function (response) {
+                        success: function (data) {
                             $('#add_user').modal('hide')
-                        },
-                        error:function(xhr){
-                            $('#add_user').modal('hide')
+                            msg(data.status,data.title,data.txt);
                             window.location.href = '/user/';
+
+                        },
+                        error:function(data){
+                            $('#add_user').modal('hide')
+                            msg(data.status,data.title,data.txt);
                         }
 
                     })
@@ -275,6 +295,7 @@
                     }
                 })
             }
-       });
+
+        });
     </script>
 {% endblock %}

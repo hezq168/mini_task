@@ -6,7 +6,7 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
 from flask_session import Session
-
+from flask_cache import Cache
 
 from celery import Celery
 from config import Config
@@ -23,6 +23,7 @@ mail = Mail()
 celery = Celery(__name__, broker=config.CELERY_BROKER_URL)
 moment = Moment()
 sess = Session()
+cache = Cache()
 
 # 程序初始化
 def create_app():
@@ -36,6 +37,8 @@ def create_app():
     login_manager.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
+    cache.init_app(app)
+
     #初始化celery
     celery.conf.update(app.config)
     TaskBase = celery.Task

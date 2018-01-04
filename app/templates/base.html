@@ -6,10 +6,10 @@
         <title>任务管理系统</title>
     {% endblock %}
     <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <script type="application/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script type="application/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>
+    <script type="application/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script type="application/javascript" src="{{ url_for('static', filename='js/jquery.validate.min.js') }}"></script>
     <script type="application/javascript" src="{{ url_for('static', filename='js/additional-methods.min.js') }}"></script>
 
@@ -50,8 +50,6 @@
 </div>
 {% endblock %}
 {# js脚本#}
-
-
 {% block js_script %}
 {% endblock %}
 </div>

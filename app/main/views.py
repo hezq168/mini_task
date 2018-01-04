@@ -7,13 +7,16 @@ from flask_login import login_required, current_user
 from . import main
 from .forms import Addtask,SearchTask,TaskContent,EditTask
 from ..models import User, Task,TaskTxt,Project,Department,Role
-from app import db
+from app import db,cache
 from app.tasks.printy import task_mail
 from hashlib import md5
 from ..decorators import permission_required
 from config import Config
 import os
 from werkzeug.utils import secure_filename
+from flask_cache import make_template_fragment_key
+
+
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -75,8 +78,9 @@ def add_user():
             _user = User(username=username, password=md5(pwd).hexdigest(), email=email, sex=sex, role_id=role_id,
                          tel=tel, qq=qq, department=department, date=datetime.now())
             db.session.add(_user)
-            flash('添加用户成功！', 'success')
-            return ("success");
+            #flash('添加用户成功！', 'success')
+            msg = {'status': 'ok', 'title': '添加用户', 'txt': '添加用户成功' }
+            return jsonify(msg);
         else:
             return '数据不合法！'
     else:
@@ -197,15 +201,15 @@ def search_task(status):
 
     if status == 'no_start':
         #分页
-        pagination = Task.query.filter(Task.task_status=="未开始").paginate(page,per_page=per_page,error_out=False)
+        pagination = Task.query.filter(Task.task_status=="未开始").filter(Task.del_status==0).paginate(page,per_page=per_page,error_out=False)
         _search_task = pagination.items
         return render_template('index.html',tasks=_search_task,search_form=search_form,pagination=pagination)
     elif status == 'start':
-        pagination = Task.query.filter(Task.task_status=="进行中").paginate(page,per_page=per_page,error_out=False)
+        pagination = Task.query.filter(Task.task_status=="进行中").filter(Task.del_status==0).paginate(page,per_page=per_page,error_out=False)
         _search_task = pagination.items
         return render_template('index.html',tasks=_search_task,search_form=search_form,pagination=pagination)
     elif status == 'end_start':
-        pagination = Task.query.filter(Task.task_status=="已完成").paginate(page,per_page=per_page,error_out=False)
+        pagination = Task.query.filter(Task.task_status=="已完成").filter(Task.del_status==0).paginate(page,per_page=per_page,error_out=False)
         _search_task = pagination.items
         return render_template('index.html',tasks=_search_task,search_form=search_form,pagination=pagination)
     else:
@@ -303,6 +307,7 @@ def task(task_id):
 # 我的资料
 @main.route('/my_info',methods=['POST','GET'])
 @login_required
+@cache.cached(timeout=60,key_prefix='my_info')
 def my_info():
     if request.method == 'POST':
         new_pass = md5(request.form.get('password')).hexdigest()
@@ -311,7 +316,6 @@ def my_info():
         db.session.commit()
         return redirect(url_for('auth.logout'))
     else:
-
         return render_template('user/my_info.html')
 
 # 上传头像
@@ -343,3 +347,15 @@ def upload_file():
             return jsonify(img)
     else:
         return '不允许访问！！！！'
+
+# 删除缓存
+@main.route('/del_cache', methods=['GET'])
+@login_required
+def del_cache():
+    # 获取模板缓存值
+    #key = make_template_fragment_key('my_info')
+    # 删除缓存
+    #cache.delete(key)
+    # 删除所有缓存
+    cache.clear()
+    return '缓存已删除！'

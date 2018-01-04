@@ -26,7 +26,11 @@ class Config():
     MAIL_USERNAME = '####################'
     MAIL_PASSWORD = '###################'
     MAIL_SENDER = '#############'
-
+	
+#  cache配置
+    CACHE_TYPE = 'filesystem'     # 缓存类型
+    CACHE_DIR = basedir+'/tmp'    # 缓存目录
+    CACHE_DEFAULT_TIMEOUT = 5*60  # 默认过期时间
 
 #   celery配置
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
